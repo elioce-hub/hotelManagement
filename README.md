@@ -13,10 +13,12 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
 
 3) [GIT] git 레포지토리 생성
  - git init
- - github에 git remote add git remote add origin https://github.com/[YourName]/demo.git
+ - github에 git remote add 
+ - git remote add origin https://github.com/elioce-hub/hrs.git
  - git add .
  - git commit -m "first commit"
  - git push -u origin master
+ #403에러가 나서 push가 안될경우 제어판\사용자 계정\자격 증명 관리자 에서 일반자격에 git을 삭제 후 재등록 해야함.
  
 4) AWS ecr에서 레파지토리 만들고 github에 올린거 ubuntu에서 clone으로 가져오기
  - rm target //뭐가 남아 있다. 그래서 삭제. 패키지하기 위해.
