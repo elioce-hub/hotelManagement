@@ -13,7 +13,7 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
 
 3) [GIT] git 레포지토리 생성
  - git init
- - github에 git remote add
+ - github에 git remote add git remote add origin https://github.com/[YourName]/demo.git
  - git add .
  - git commit -m "first commit"
  - git push -u origin master
