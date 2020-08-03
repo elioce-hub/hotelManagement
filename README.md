@@ -3,6 +3,7 @@ Intensive Level2 AWS Cloud - final team project
 
 실습수업교재
 MSA School - https://msaschool.io/#/%EC%84%A4%EA%B3%84--%EA%B5%AC%ED%98%84--%EC%9A%B4%EC%98%81%EB%8B%A8%EA%B3%84/04_%EA%B5%AC%ED%98%84/index
+WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
 
 1) [AWS] Cluster 생성 
  - eksctl create cluster --name admin24-scluster --version 1.15 --nodegroup-name standard-workers --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3
