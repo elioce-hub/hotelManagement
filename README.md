@@ -34,6 +34,9 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
  - curl -o kafka2.5.tgz -l http://mirror.navercorp.com/apache/kafka/2.5.0/kafka_2.13-2.5.0.tgz
  - 주키퍼 실행 ./zookeeper-server-start.sh ../config/zookeeper.properties
  - 카프카 실행 ./kafka-server-start.sh ../config/server.properties
+ - c:/tmp 삭제 후 /bin/windows에서 주키퍼, 카프카 순서로 실행
+ - zookeeper-server-start.bat ../../config/zookeeper.properties
+ - kafka-server-start.bat ../../config/server.properties
  
 6) AWS 배포
  - kubectl create deploy order --image=052937454741.dkr.ecr.eu-central-1.amazonaws.com/order2:v1
@@ -44,3 +47,5 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
 
 8) CI,CD에서는 siege 옵션을 -c1 -t300S 걸어주고 배포했을때 availability 100% 확인.
  
+0) TEST scripts
+- http post http://localhost:8081/reservations customerName=test hotelId=1 nights=3 price=50000 status=예약 checkinDate=20200803
