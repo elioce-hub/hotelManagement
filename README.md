@@ -20,6 +20,10 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
  - git push -u origin master
  #403에러가 나서 push가 안될경우 제어판\사용자 계정\자격 증명 관리자 에서 일반자격에 git을 삭제 후 재등록 해야함.
  
+ - netstat -ano | findstr "PID :808"
+ - taskkill /pid 11612 /f
+ 
+ 
 4) AWS ecr에서 레파지토리 만들고 github에 올린거 ubuntu에서 clone으로 가져오기
  - rm target //뭐가 남아 있다. 그래서 삭제. 패키지하기 위해.
  - mvn package // 패키징
