@@ -37,6 +37,7 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
  - c:/tmp 삭제 후 /bin/windows에서 주키퍼, 카프카 순서로 실행
  - zookeeper-server-start.bat ../../config/zookeeper.properties
  - kafka-server-start.bat ../../config/server.properties
+ - 카프카 수신 확인 : kafka-console-consumer.bat --bootstrap-server http://localhost:9092 --topic hrs --from-beginning
  
 6) AWS 배포
  - kubectl create deploy order --image=052937454741.dkr.ecr.eu-central-1.amazonaws.com/order2:v1
