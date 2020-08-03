@@ -34,5 +34,7 @@ WorkFlowy - https://workflowy.com/s/msa/27a0ioMCzlpV04Ib
  - kubectl expose deploy order --type=ClusterIP --port=8080
  - kubectl edit svc gateway //LoadBalancer 수정. 외부로 IP노출.
  
+7) AWS AutoScale 을 위해 Matrics, 설치 필요.
 
+8) CI,CD에서는 siege 옵션을 -c1 -t300S 걸어주고 배포했을때 availability 100% 확인.
  
