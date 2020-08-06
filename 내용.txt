@@ -1,0 +1,213 @@
+Intensive 개인과제
+
+skccuser24 // skcc!12
+
+액세스 키 생성
+	AWS 로그인 후 IAM > 사용자 > skccuser24 선택 > 보안자격증명 탭 > 액세스 키 만들기
+	액세스 키 ID : 
+	비밀 액세스 키 : 
+	
+aws configure
+	AWS Access Key ID [****************YLUG]: 
+	AWS Secret Access Key [****************rRZo]:
+	Default region name [ap-northeast-1]: 
+	Default output format [json]: json
+
+클러스터 생성하고 kubectl 사용.
+	eksctl create cluster --name skccuser24 --version 1.15 --nodegroup-name standard-workers --node-type t3.medium --nodes 4 --nodes-min 1 --nodes-max 4
+	
+ECR Login @ubuntu
+	aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com
+	
+ECR 레포지토리 생성
+	skccuser24-gateway
+	skccuser24-reservation
+	skccuser24-payment
+	skccuser24-reservationmanagement
+	skccuser24-customermanagement
+	
+GIT Clone
+	git clone https://github.com/elioce-hub/gateway.git
+	git clone https://github.com/elioce-hub/reservation.git
+	git clone https://github.com/elioce-hub/payment.git
+	git clone https://github.com/elioce-hub/Reservationmanagement.git
+	git clone https://github.com/elioce-hub/customerManagement.git
+
+Project build
+	mvn clean
+	mvn package -Dmaven.test.skip=true
+
+Dockerizing
+	docker build -t 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservation:v1 .
+	docker build -t 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-payment:v1 .
+	docker build -t 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservationmanagement:v2 .
+	docker build -t 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-gateway:v4 .
+	docker build -t 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-customermanagement:v2 .
+
+Docker image push
+	docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservation:v1
+	docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-payment:v1
+	docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservationmanagement:v2
+	docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-gateway:v4
+	docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-customermanagement:v2
+	
+	
+	
+	kubectl create deploy reservation --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservation:v1
+	kubectl create deploy payment --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-payment:v1
+	kubectl create deploy reservationmanagement --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservationmanagement:v2
+	kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-gateway:v4
+	kubectl create deploy skccuser24-customermanagement --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-customermanagement:v2
+	
+	kubectl create deploy skccuser24-customermanagement --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-customermanagement:4572f752cc9b9336cc49c508c25bd35761acc360
+	
+	kubectl set image deploy reservationmanagement skccuser24-reservationmanagement=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-reservationmanagement:v2
+	kubectl set image deploy gateway skccuser24-gateway=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/skccuser24-gateway:v4
+	
+	kubectl expose deploy reservation --type=ClusterIP --port=8080
+	kubectl expose deploy payment --type=ClusterIP --port=8080
+	kubectl expose deploy reservationmanagement --type=ClusterIP --port=8080
+	kubectl expose deploy gateway --type=LoadBalancer --port=8080
+	kubectl expose deploy skccuser24-customermanagement --type=ClusterIP --port=8080
+	
+
+	kubectl delete service,deploy --all
+	
+CI/CD
+
+	환경변수 설정
+	
+	KUBE_URL
+	https://D01577A4327EA41E90557F863944FB4D.yl4.ap-northeast-2.eks.amazonaws.com
+	
+	KUBE_TOKEN
+	eyJhbGciOiJSUzI1NiIsImtpZCI6IiJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJla3MtYWRtaW4tdG9rZW4tandwcHIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZWtzLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiYWU2OTAxYzItYzJjMS00YzdhLWFhNGYtODY4MjhjMmFmZThjIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOmVrcy1hZG1pbiJ9.Wlx7AifXrmlp7ey0FVAau2UelDpU1aZwew52xRLZci0VeoeFVJuUyxftLj9badJiwqs2nv7d9y3rzpnN6hSP0e1JFI_ONVKvquYLr4HJmq7OY7LVpbjCqXHnWpIicWYN05U6alNaIqs9aIT5UyxBgQ59DQFKodg9fcUlJ6iGLnTg1vPL_k6C1kbzIzajErnOrJetvlPFjybaD6pwtW9pyfOPas3q_Qp6yV32D9DAdLItPeiIE6WEHTRf18bg2l1c6dw20OtyqYA_K53rTIHtJI-WBGDJ_7oHdE2LtiFojaQ5sK_D1JppX5jOlUX_7H5WlircYqPsUww15E1fRg10AA
+
+cateway application.yaml 파일의 uri를 cloud에서 띄울 서비스명과 맞춰 줘야 함.
+
+
+
+auto scale output 확인.
+
+	deployment.yaml 에 설정 추가.
+	
+			resources:
+				limits:
+				  cpu: 500m
+				requests:
+				  cpu: 200m
+
+
+metric 설치
+	kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+
+
+	kubectl autoscale deployment skccuser24-customermanagement --cpu-percent=15 --min=1 --max=10
+	
+	kubectl get pod -w
+
+siege 설치
+
+	cd~
+	curl -C - -O http://download.joedog.org/siege/siege-latest.tar.gz
+	tar -xvf siege-latest.tar.gz
+	cd siege-4.0.7/    <-최신버전의 볼더명으로 생성됨.
+	./configure
+	make
+	sudo make install
+
+
+siege.yaml 파일 생성
+
+	apiVersion: v1
+	kind: Pod
+	metadata:
+	  name: siege
+	spec:
+	  containers:
+		- name: siege
+		  image: apexacme/siege-nginx	
+		  
+siege 실행	
+
+	kubectl exec -it siege -- /bin/bash
+	
+siege 내에서 httpie 설치
+
+	apt-get update
+	apt-get install httpie
+	
+siege 부하발생
+
+	siege -v -c100 -t180S -r10 --content-type "application/json" 'http://skccuser24-customermanagement:8080/customerManagements/customer1@gmail.com PATCH {"prcsDvsn":"COUPON"}'
+	
+	siege -v -c100 -t180S -r10 --content-type "application/json" 'http://skccuser24-customermanagement:8080/customerManagements/customer1@gmail.com PUT {"prcsDvsn":"COUPON","couponIssueReservationCnt":3,"lastCouponIssueDate":"20200805","couponStatus":"ISSUED","customerName":"customer1","couponPin":"C1234D22"}'
+	
+
+
+readiness 확인.
+설정 제거후 배포할때 서비스 호출.
+					readinessProbe:
+                      httpGet:
+                        path: /actuator/health
+                        port: 8080
+                      initialDelaySeconds: 10
+                      timeoutSeconds: 2
+                      periodSeconds: 5
+                      failureThreshold: 10
+
+설정 후 배포할때 서비스 호출
+
+liveness 파일생성하고 지우고. 파일 유무로 상태체크하도록 수정
+
+				args:
+                    - /bin/sh
+                    - -c
+                    - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 100
+					
+				livenessProbe:
+                      exec:
+                        command:
+                        - cat
+                        - /tmp/healthy
+                      initialDelaySeconds: 120
+                      timeoutSeconds: 2
+                      periodSeconds: 5
+                      failureThreshold: 5
+
+//로컬 소스 구현
+
+a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com
+
+예약
+http post http://localhost:8088/reservations customerName=customer1 nights=3 checkinDate=2020805 hotelId=1 price=600000 email=customer1@gmail.com
+
+http post http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/reservations customerName=customer1 nights=3 checkinDate=2020805 hotelId=1 price=600000 email=customer1@gmail.com
+
+http patch http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/reservations/2 updateGubun=delete
+
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/reservations
+
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/reservationinquiries
+
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/payments
+
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/hotelReservationManagements
+
+고객관리 데이터 확인
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/customerManagements
+
+뷰
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/customerReservationInfoes
+
+쿠폰발행 req/res
+http patch http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/customerManagements/customer1@gmail.com prcsDvsn=COUPON
+
+http put http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/customerManagements/customer1@gmail.com prcsDvsn=COUPON couponIssueReservationCnt=3 lastCouponIssueDate=20200805 couponStatus=ISSUED customerName=customer1 couponPin=C1234D22
+
+
+뷰
+http get http://a9b7e439326e4498e9bf3e541f1fde69-840853172.ap-northeast-2.elb.amazonaws.com:8080/customerReservationInfoes
+
+쿠폰발행 TEST
+http patch http://localhost:8084/customerManagements/customer1@gmail.com prcsDvsn=COUPON
